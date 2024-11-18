@@ -23,9 +23,10 @@ public class Consumer implements Runnable {
 
             try {
                 message = queue.take();
+                semaphore.acquire();
 
-                semaphore.acquire(); // Adquire o semáforo antes de acessar o arquivo
-                try (BufferedReader br = new BufferedReader(new FileReader("file.txt"))) {
+                // Leitura do saldo atual do arquivo
+                try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\joaop\\OneDrive\\Projetos Dev\\PROJ-Java\\file.txt"))) {
                     String st = br.readLine(); // Leitura única da linha de saldo
                     if (st != null) {
                         int currentBalance = Integer.parseInt(st);
@@ -33,21 +34,30 @@ public class Consumer implements Runnable {
                         int updatedBalance = currentBalance + value;
 
                         // Gravação no arquivo do saldo atualizado
-                        try (FileWriter myWriter = new FileWriter("file.txt")) {
+                        try (FileWriter myWriter = new FileWriter("C:\\Users\\joaop\\OneDrive\\Projetos Dev\\PROJ-Java\\file.txt")) {
                             myWriter.write(String.valueOf(updatedBalance));
-                            System.out.println("Consumidor | Consumido: " + value);
-                            System.out.println("Saldo Atualizado: " + updatedBalance);
-                            System.out.println("-----------------------------------");
                         }
+
+                        // Registrar a mensagem no arquivo de log
+                        try (FileWriter logWriter = new FileWriter("C:\\Users\\joaop\\OneDrive\\Projetos Dev\\PROJ-Java\\escrita.txt", true)) {
+                            logWriter.write("Consumidor | Consumido: " + value + "\n");
+                            logWriter.write("Saldo Atualizado: " + updatedBalance + "\n");
+                            logWriter.write("-----------------------------------\n");
+                        }
+
+                        // Ainda exibe no terminal, se desejar
+                        System.out.println("Consumidor | Consumido: " + value);
+                        System.out.println("Saldo Atualizado: " + updatedBalance);
+                        System.out.println("-----------------------------------");
                     }
-                } finally {
-                    semaphore.release(); // Libera o semáforo
                 }
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (IOException ex) {
                 Logger.getLogger(Consumer.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                semaphore.release();
             }
         }
     }
