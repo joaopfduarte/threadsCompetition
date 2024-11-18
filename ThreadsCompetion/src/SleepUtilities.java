@@ -10,7 +10,7 @@ import java.util.Random;
 public class SleepUtilities {
     public static void nap() {
         try {
-            Thread.sleep(1000); 
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

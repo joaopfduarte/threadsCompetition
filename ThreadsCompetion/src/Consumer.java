@@ -37,6 +37,7 @@ public class Consumer implements Runnable {
                             myWriter.write(String.valueOf(updatedBalance));
                             System.out.println("Consumidor | Consumido: " + value);
                             System.out.println("Saldo Atualizado: " + updatedBalance);
+                            System.out.println("-----------------------------------");
                         }
                     }
                 } finally {
